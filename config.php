@@ -6,7 +6,7 @@ return [
     'baseUrl' => '',
     'production' => false,
     'siteName' => 'Prova Manel',
-    'siteDescription' => 'bla bla bla',
+    'siteDescription' => 'Jigsaw de Manel',
 
     // Algolia DocSearch credentials
     'docsearchApiKey' => env('DOCSEARCH_KEY'),
