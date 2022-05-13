@@ -12,38 +12,30 @@ class IterableObject extends BaseCollection implements ArrayAccess
 {
     public function __get($key)
     {
-        if (! array_key_exists($key, $this->items) && in_array($key, static::$proxies)) {
+        if (! $this->offsetExists($key) && in_array($key, static::$proxies)) {
             return new HigherOrderCollectionProxy($this, $key);
         }
 
         return $this->get($key);
     }
 
-    public function except($keys)
-    {
-        return is_null($keys) ? $this : parent::except($keys);
-    }
-
     public function get($key, $default = null)
     {
-        if (array_key_exists($key, $this->items)) {
+        if ($this->offsetExists($key)) {
             return $this->getElement($key);
         }
 
         return value($default);
     }
 
-    public function has($key)
+    public function offsetGet($key)
     {
-        $keys = is_array($key) ? $key : func_get_args();
-
-        foreach ($keys as $value) {
-            if (! array_key_exists($value, $this->items)) {
-                return false;
-            }
+        if (! isset($this->items[$key])) {
+            $prefix = $this->_source ? 'Error in ' . $this->_source . ': ' : 'Error: ';
+            throw new Exception($prefix . "The key '$key' does not exist.");
         }
 
-        return true;
+        return $this->getElement($key);
     }
 
     public function set($key, $value)
@@ -58,17 +50,6 @@ class IterableObject extends BaseCollection implements ArrayAccess
     public function putIterable($key, $element)
     {
         $this->put($key, $this->isArrayable($element) ? $this->makeIterable($element) : $element);
-    }
-
-    #[\ReturnTypeWillChange]
-    public function offsetGet($key)
-    {
-        if (! isset($this->items[$key])) {
-            $prefix = $this->_source ? 'Error in ' . $this->_source . ': ' : 'Error: ';
-            throw new Exception($prefix . "The key '$key' does not exist.");
-        }
-
-        return $this->getElement($key);
     }
 
     protected function getElement($key)

@@ -2,10 +2,9 @@
 
 namespace TightenCo\Jigsaw;
 
-use Illuminate\Container\Container;
-use TightenCo\Jigsaw\Console\ConsoleOutput;
-use TightenCo\Jigsaw\File\Filesystem;
 use TightenCo\Jigsaw\File\InputFile;
+use TightenCo\Jigsaw\File\Filesystem;
+use TightenCo\Jigsaw\Console\ConsoleOutput;
 
 class SiteBuilder
 {
@@ -118,10 +117,7 @@ class SiteBuilder
     {
         $meta = $this->getMetaData($file, $siteData->page->baseUrl);
 
-        $pageData = PageData::withPageMetaData($siteData, $meta);
-        Container::getInstance()->instance('pageData', $pageData);
-
-        return $this->getHandler($file)->handle($file, $pageData);
+        return $this->getHandler($file)->handle($file, PageData::withPageMetaData($siteData, $meta));
     }
 
     private function getHandler($file)
@@ -149,7 +145,7 @@ class SiteBuilder
             return urldecode(dirname($permalink));
         }
 
-        return urldecode($this->outputPathResolver->directory($file->path(), $file->name(), $file->extension(), $file->page(), $file->prefix()));
+        return urldecode($this->outputPathResolver->directory($file->path(), $file->name(), $file->extension(), $file->page()));
     }
 
     private function getOutputPath($file)
@@ -162,8 +158,7 @@ class SiteBuilder
             $file->path(),
             $file->name(),
             $file->extension(),
-            $file->page(),
-            $file->prefix()
+            $file->page()
         )));
     }
 

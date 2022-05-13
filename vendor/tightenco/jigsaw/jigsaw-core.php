@@ -118,11 +118,11 @@ $container->singleton(Factory::class, function ($c) use ($cachePath, $bladeCompi
     });
 
     $resolver->register('php', function () {
-        return new PhpEngine(new Filesystem);
+        return new PhpEngine();
     });
 
     $resolver->register('markdown', function () use ($c) {
-        return new MarkdownEngine($c[FrontMatterParser::class], new Filesystem, $c['buildPath']['views']);
+        return new MarkdownEngine($c[FrontMatterParser::class], new Filesystem, $c['buildPath']['source']);
     });
 
     $resolver->register('blade-markdown', function () use ($c, $compilerEngine) {
@@ -131,7 +131,7 @@ $container->singleton(Factory::class, function ($c) use ($cachePath, $bladeCompi
 
     (new BladeDirectivesFile($c['cwd'] . '/blade.php', $bladeCompiler))->register();
 
-    $finder = new FileViewFinder(new Filesystem, [$cachePath, $c['buildPath']['views']]);
+    $finder = new FileViewFinder(new Filesystem, [$cachePath, $c['buildPath']['source']]);
 
     $factory = new Factory($resolver, $finder, new FakeDispatcher());
     $factory->setContainer($c);

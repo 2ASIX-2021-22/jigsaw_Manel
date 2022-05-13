@@ -86,7 +86,6 @@ class BuildCommand extends Command
     {
         $this->app->buildPath = [
             'source' => $this->getBuildPath('source', $env),
-            'views' => $this->getBuildPath('views', $env) ?: $this->getBuildPath('source', $env),
             'destination' => $this->getBuildPath('destination', $env),
         ];
     }
@@ -94,11 +93,9 @@ class BuildCommand extends Command
     private function getBuildPath($pathType, $env)
     {
         $customPath = Arr::get($this->app->config, 'build.' . $pathType);
-        $buildPath = $customPath
-            ? $this->getAbsolutePath($customPath)
-            :  Arr::get($this->app->buildPath, $pathType);
+        $buildPath = $customPath ? $this->getAbsolutePath($customPath) : $this->app->buildPath[$pathType];
 
-        return str_replace('{env}', $env, $buildPath ?? '');
+        return str_replace('{env}', $env, $buildPath);
     }
 
     private function getAbsolutePath($path)
@@ -111,7 +108,7 @@ class BuildCommand extends Command
         if (! $this->input->getOption('quiet')) {
             $customPath = Arr::get($this->app->config, 'build.destination');
 
-            if ($customPath && strpos($customPath, 'build_') !== 0 && file_exists($customPath)) {
+            if ($customPath && strpos($customPath, 'build_') !== 0) {
                 return $this->console->confirm('Overwrite "' . $this->app->buildPath['destination'] . '"? ');
             }
         }

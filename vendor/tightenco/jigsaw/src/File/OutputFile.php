@@ -14,9 +14,8 @@ class OutputFile
     private $contents;
     private $data;
     private $page;
-    private $prefix;
 
-    public function __construct(InputFile $inputFile, $path, $name, $extension, $contents, $data, $page = 1, $prefix = '')
+    public function __construct(InputFile $inputFile, $path, $name, $extension, $contents, $data, $page = 1)
     {
         $this->setInputFile($inputFile, $data);
         $this->path = $path;
@@ -25,7 +24,6 @@ class OutputFile
         $this->contents = $contents;
         $this->data = $data;
         $this->page = $page;
-        $this->prefix = $prefix;
     }
 
     public function setInputFile(InputFile $inputFile, PageData $data)
@@ -67,11 +65,6 @@ class OutputFile
     public function page()
     {
         return $this->page;
-    }
-
-    public function prefix()
-    {
-        return $this->prefix;
     }
 
     public function putContents($destination)

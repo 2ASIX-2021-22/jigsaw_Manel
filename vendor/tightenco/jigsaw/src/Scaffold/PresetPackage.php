@@ -15,7 +15,6 @@ class PresetPackage
         'docs' => 'tightenco/jigsaw-docs-template',
     ];
 
-    public $constraint;
     public $name;
     public $nameShort;
     public $path;
@@ -81,9 +80,7 @@ class PresetPackage
 
         $parts = explode('/', $name, 3);
         $this->vendor = Arr::get($parts, 0);
-        $composerName = explode(':', Arr::get($parts, 1));
-        $this->name = $composerName[0];
-        $this->constraint = $composerName[1] ?? '';
+        $this->name = Arr::get($parts, 1);
         $this->suffix = Arr::get($parts, 2);
         $this->shortName = $this->getShortName();
     }
@@ -103,10 +100,6 @@ class PresetPackage
 
         if (! $this->files->exists($this->path)) {
             $package = $this->vendor . '/' . $this->name;
-
-            if (! empty($this->constraint)) {
-                $package .= ':' . $this->constraint;
-            }
 
             try {
                 $this->installPackageFromComposer($package);
